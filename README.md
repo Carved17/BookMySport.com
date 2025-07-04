@@ -53,32 +53,21 @@ BookMySport/
 🧑‍💻 Installation & Setup
 Clone the repo
 
-bash
-Copy
-Edit
+Open Cmd and code:
+
 git clone https://github.com/your-username/BookMySport.git
 cd BookMySport
 Install dependencies
 
-bash
-Copy
-Edit
+Open Cmd and code:
+
 cd backend
 npm install
 Create a .env file in /backend folder:
 
-env
-Copy
-Edit
-PORT=5000
-DATABASE=mongodb://localhost:27017/bookmysport
-JWT_SECRET=your_jwt_secret
-FRONTEND_URL=http://localhost:3000
-Run backend
 
-bash
-Copy
-Edit
+
+Open Cmd and code:
 node server.js
 Serve static frontend
 Use any static server (like VS Code Live Server) to serve files from the public/ folder.
@@ -103,9 +92,7 @@ Edit
 Authorization: Bearer <token>
 The authmiddleware.js verifies the token and attaches the user ID to req.user.
 
-📷 Screenshots
-Booking Page	Payment Page	Confirmation Page
-(Add your own screenshots here later)		
+
 
 🧠 What I Learned
 Building secure login and auth systems using JWT
