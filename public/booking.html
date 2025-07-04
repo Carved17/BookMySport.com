@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookMySport</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse all the CSS from previous pages */
+        :root {
+            --primary: #4a6bff;
+            --secondary: #ff6b6b;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+        }
+
+        /* Header - Same as before */
+        header {
+            background: linear-gradient(135deg, var(--primary), #6a5acd);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-buttons .btn {
+            margin-left: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-signup {
+            background-color: var(--secondary);
+            border: 2px solid var(--secondary);
+            color: white;
+        }
+
+        .btn-signup:hover {
+            background-color: #ff5252;
+            border-color: #ff5252;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Booking Container */
+        .booking-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Booking Steps */
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: #ddd;
+            color: #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .step.completed .step-number i {
+            display: block;
+        }
+
+        .step.completed .step-number span {
+            display: none;
+        }
+
+        .step-number i {
+            display: none;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step.completed .step-label {
+            color: var(--success);
+        }
+
+        .booking-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #ddd;
+            z-index: 0;
+        }
+
+        /* Booking Content */
+        .booking-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .booking-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .venue-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 1.5rem;
+        }
+
+        .venue-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .venue-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .venue-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Date Selection */
+        .date-selection {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .date-picker {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.8rem;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-option {
+            min-width: 80px;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-option:hover {
+            border-color: var(--primary);
+        }
+
+        .date-option.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .date-option .day {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .date-option .date {
+            font-size: 0.9rem;
+        }
+
+        /* Time Slots */
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .time-slot {
+            padding: 0.8rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary);
+        }
+
+        .time-slot.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .time-slot.unavailable {
+            background-color: #f8f9fa;
+            color: #999;
+            cursor: not-allowed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-slot.unavailable::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ff6b6b;
+            transform: rotate(-15deg);
+        }
+
+        /* Duration Selection */
+        .duration-selection {
+            margin-bottom: 2rem;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .duration-option {
+            padding: 0.8rem 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+        }
+
+        .duration-option:hover {
+            border-color: var(--primary);
+        }
+
+        .duration-option.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .duration-option.disabled {
+            cursor: not-allowed;
+            background-color: #f8f9fa !important;
+            color: #999 !important;
+            border-color: #ddd !important;
+            text-decoration: line-through;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Booking Summary */
+        .booking-summary {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .summary-header {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .summary-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .summary-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .detail-label {
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .total-row {
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .btn-continue {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-continue:hover {
+            background-color: #3a5bed;
+        }
+
+        .btn-continue:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Footer - Same as before */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-summary {
+                position: static;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .auth-buttons {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .booking-steps {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .booking-steps::before {
+                display: none;
+            }
+
+            .step {
+                flex-direction: row;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .step-number {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .time-slots {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .duration-options {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                
+                <span>BookMySport</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Sports</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn btn-login">Login</button>
+                <button class="btn btn-signup">Sign Up</button>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Booking Container -->
+    <div class="booking-container">
+        <div class="booking-content">
+            <!-- Booking Steps -->
+            <div class="booking-steps">
+                <div class="step active">
+                    <div class="step-number"><span>1</span><i class="fas fa-check"></i></div>
+                    <div class="step-label">Date & Time</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"><span>2</span><i class="fas fa-check"></i></div>
+                    <div class="step-label">Sign In</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"><span>3</span><i class="fas fa-check"></i></div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"><span>4</span><i class="fas fa-check"></i></div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+
+            <!-- Booking Header -->
+            <div class="booking-header">
+                <div class="venue-img">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1075&q=80" alt="Elite Snooker Club">
+                </div>
+                <div class="venue-info">
+                    <h3>STOP'N'STROKE POOL & SNOOKER CLUB</h3>
+                    <p>Snooker • Fathegunj • Table 5</p>
+                </div>
+            </div>
+
+            <!-- Date Selection -->
+            <div class="date-selection">
+                <h3 class="section-title">Select Date</h3>
+                <div class="date-picker">
+                    <div class="date-option active">
+                        <div class="day">Today</div>
+                        <div class="date">Jun 12</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Tue</div>
+                        <div class="date">Jun 13</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Wed</div>
+                        <div class="date">Jun 14</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Thu</div>
+                        <div class="date">Jun 15</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Fri</div>
+                        <div class="date">Jun 16</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Sat</div>
+                        <div class="date">Jun 17</div>
+                    </div>
+                    <div class="date-option">
+                        <div class="day">Sun</div>
+                        <div class="date">Jun 18</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Slots -->
+            <div class="time-selection">
+                <h3 class="section-title">Available Time Slots</h3>
+                <div class="time-slots">
+                    <div class="time-slot">9:00 AM</div>
+                    <div class="time-slot">10:00 AM</div>
+                    <div class="time-slot">11:00 AM</div>
+                    <div class="time-slot">12:00 PM</div>
+                    <div class="time-slot">1:00 PM</div>
+                    <div class="time-slot">2:00 PM</div>
+                    <div class="time-slot">3:00 PM</div>
+                    <div class="time-slot active">4:00 PM</div>
+                    <div class="time-slot">5:00 PM</div>
+                    <div class="time-slot">6:00 PM</div>
+                    <div class="time-slot unavailable">7:00 PM</div>
+                    <div class="time-slot">8:00 PM</div>
+                    <div class="time-slot">9:00 PM</div>
+                    <div class="time-slot">10:00 PM</div>
+                </div>
+            </div>
+
+            <!-- Duration Selection -->
+            <div class="duration-selection">
+                <h3 class="section-title">Select Duration</h3>
+                <div class="duration-options">
+                    <div class="duration-option">1 hour</div>
+                    <div class="duration-option active">2 hours</div>
+                    <div class="duration-option">3 hours</div>
+                    <div class="duration-option">4 hours</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="booking-summary">
+            <div class="summary-card">
+                <h3 class="summary-header">Booking Summary</h3>
+                <div class="summary-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Venue:</span>
+                        <span class="detail-value">STOP'N'STROKE POOL & SNOOKER CLUB</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sport:</span>
+                        <span class="detail-value">Snooker</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value">Jun 12, 2023</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value">4:00 PM - 6:00 PM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Duration:</span>
+                        <span class="detail-value">2</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Rate:</span>
+                        <span class="detail-value">200/hour</span>
+                    </div>
+                    <div class="detail-row total-row">
+                        <span class="detail-label">Total:</span>
+                        <span class="detail-value">400.00</span>
+                    </div>
+                </div>
+                <button class="btn-continue" onclick="window.location.href='login.html'">Continue to Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>BookMySport</h3>
+                <p>Your one-stop solution for booking sports slots across multiple venues and sports.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Sports</h3>
+                <ul>
+                    <li><a href="#">Snooker</a></li>
+                    <li><a href="#">Pickleball</a></li>
+                    <li><a href="#">Football Turf</a></li>
+                    <li><a href="#">Badminton</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Venues</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BookMySport. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Constants for pricing
+        const RATE_PER_HOUR = 200;
+        const TAX_RATE = 0.18; // 18%
+        const CLOSING_HOUR = 23; // 11 PM in 24-hour format
+
+        // Function to disable duration options based on selected time
+        function updateDurationOptions(selectedTime) {
+            const durationOptions = document.querySelectorAll('.duration-option');
+            const [time, period] = selectedTime.split(' ');
+            let hour = parseInt(time.split(':')[0]);
+            
+            // Convert to 24-hour format
+            if (period === 'PM' && hour !== 12) {
+                hour += 12;
+            } else if (period === 'AM' && hour === 12) {
+                hour = 0;
+            }
+            
+            // Calculate remaining hours until closing
+            const remainingHours = CLOSING_HOUR - hour;
+            
+            // Reset all options first
+            durationOptions.forEach(option => {
+                option.classList.remove('disabled');
+                option.style.textDecoration = 'none';
+                option.style.opacity = '1';
+                option.style.pointerEvents = 'auto';
+            });
+            
+            // Disable options that would go past closing time
+            durationOptions.forEach(option => {
+                const duration = parseInt(option.textContent);
+                if (duration > remainingHours) {
+                    option.classList.add('disabled');
+                    option.style.textDecoration = 'line-through';
+                    option.style.opacity = '0.5';
+                    option.style.pointerEvents = 'none';
+                    
+                    // If this was the active option, switch to the first available option
+                    if (option.classList.contains('active')) {
+                        option.classList.remove('active');
+                        const firstAvailable = document.querySelector('.duration-option:not(.disabled)');
+                        if (firstAvailable) {
+                            firstAvailable.classList.add('active');
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to update booking summary
+        function updateBookingSummary() {
+            // Get selected values
+            const activeDate = document.querySelector('.date-option.active');
+            const activeTime = document.querySelector('.time-slot.active');
+            const activeDuration = document.querySelector('.duration-option.active:not(.disabled)');
+            
+            // If no active duration (all disabled), find first available
+            let durationElement = activeDuration;
+            if (!durationElement) {
+                durationElement = document.querySelector('.duration-option:not(.disabled)');
+                if (durationElement) {
+                    durationElement.classList.add('active');
+                }
+            }
+
+            // Default values if none selected (shouldn't happen with your current HTML)
+            const day = activeDate ? activeDate.querySelector('.day').textContent : 'Today';
+            const date = activeDate ? activeDate.querySelector('.date').textContent : 'Jun 12';
+            const time = activeTime ? activeTime.textContent : '4:00 PM';
+            const duration = durationElement ? durationElement.textContent : '1 hour';
+
+            // Calculate end time
+            const hours = parseInt(duration);
+            const [startHour, period] = time.split(' ');
+            const hour = parseInt(startHour.split(':')[0]);
+            
+            // Convert to 24-hour format for calculation
+            let hour24 = period === 'PM' && hour !== 12 ? hour + 12 : hour;
+            hour24 = period === 'AM' && hour === 12 ? 0 : hour24;
+            
+            const endHour24 = hour24 + hours;
+            
+            // Convert back to 12-hour format
+            let endHour = endHour24 % 12;
+            endHour = endHour === 0 ? 12 : endHour;
+            const endPeriod = endHour24 >= 12 ? 'PM' : 'AM';
+            const endTime = `${endHour}:00 ${endPeriod}`;
+
+            // Calculate amounts
+            const subtotal = hours * RATE_PER_HOUR;
+            const tax = Math.round(subtotal * TAX_RATE);
+            const total = subtotal + tax;
+
+            // Update summary display
+            const summaryValues = document.querySelectorAll('.summary-details .detail-value');
+            summaryValues[2].textContent = `${day}, ${date} 2023`; // Date
+            summaryValues[3].textContent = `${time} - ${endTime}`; // Time slot
+            summaryValues[4].textContent = `${hours} hour${hours > 1 ? 's' : ''}`; // Duration
+            summaryValues[6].textContent = `₹${tax}.00`; // Tax
+            document.querySelector('.total-row .detail-value').textContent = `₹${total}.00`; // Total
+        }
+
+        // Initialize with default values
+        updateDurationOptions("4:00 PM"); // Default selected time
+        updateBookingSummary();
+
+        // Date Selection
+        document.querySelectorAll('.date-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.date-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                updateBookingSummary();
+            });
+        });
+
+        // Time Slot Selection
+        document.querySelectorAll('.time-slot:not(.unavailable)').forEach(slot => {
+            slot.addEventListener('click', function() {
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                updateDurationOptions(this.textContent);
+                updateBookingSummary();
+            });
+        });
+
+        // Duration Selection
+        document.querySelectorAll('.duration-option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (!this.classList.contains('disabled')) {
+                    document.querySelectorAll('.duration-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    updateBookingSummary();
+                }
+            });
+        });
+
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            const authButtons = document.querySelector('.auth-buttons');
+            
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+                authButtons.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                authButtons.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                authButtons.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '80px';
+                navLinks.style.left = '0';
+                navLinks.style.width = '100%';
+                navLinks.style.backgroundColor = 'rgba(74, 107, 255, 0.95)';
+                navLinks.style.padding = '1rem';
+                
+                authButtons.style.position = 'absolute';
+                authButtons.style.top = 'calc(80px + 180px)';
+                authButtons.style.left = '0';
+                authButtons.style.width = '100%';
+                authButtons.style.backgroundColor = 'rgba(74, 107, 255, 0.95)';
+                authButtons.style.padding = '1rem';
+                authButtons.style.gap = '1rem';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Previous head content remains the same -->
+    <style>
+        /* Add these new styles to your existing CSS */
+        
+        /* Payment Status Modal */
+        .payment-status-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .payment-status-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .payment-status-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-icon {
+            color: var(--success);
+        }
+        
+        .failure-icon {
+            color: var(--secondary);
+        }
+        
+        .payment-status-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .payment-status-message {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .payment-status-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn-retry {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-retry:hover {
+            background-color: #3a5bed;
+        }
+        
+        .btn-close {
+            padding: 0.8rem 1.5rem;
+            background-color: #f1f1f1;
+            color: var(--dark);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-close:hover {
+            background-color: #ddd;
+        }
+        
+        /* Error message */
+        .payment-error {
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Previous body content remains the same until the payment button -->
+
+    <div class="payment-error" id="payment-error">
+        <i class="fas fa-exclamation-circle"></i> <span id="error-message"></span>
+    </div>
+
+    <button class="btn-pay" id="pay-button">Proceed to Payment</button>
+    
+    <!-- Payment Status Modal -->
+    <div class="payment-status-modal" id="payment-status-modal">
+        <div class="payment-status-content">
+            <div class="payment-status-icon failure-icon" id="status-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h3 class="payment-status-title" id="status-title">Payment Failed</h3>
+            <p class="payment-status-message" id="status-message">
+                We couldn't process your payment. Please try again or use a different payment method.
+            </p>
+            <div class="payment-status-buttons">
+                <button class="btn-retry" id="retry-button">Try Again</button>
+                <button class="btn-close" id="close-button">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Previous JavaScript remains the same until the Razorpay integration
+        
+        // Payment Status Modal Elements
+        const paymentStatusModal = document.getElementById('payment-status-modal');
+        const statusIcon = document.getElementById('status-icon');
+        const statusTitle = document.getElementById('status-title');
+        const statusMessage = document.getElementById('status-message');
+        const retryButton = document.getElementById('retry-button');
+        const closeButton = document.getElementById('close-button');
+        const paymentError = document.getElementById('payment-error');
+        const errorMessage = document.getElementById('error-message');
+
+        // Razorpay Integration with enhanced error handling
+        document.getElementById('pay-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Hide any previous error messages
+            paymentError.style.display = 'none';
+            
+            // In a real implementation, you would get these values from your server
+            const options = {
+                "key": "rzp_test_YOUR_RAZORPAY_KEY", // Replace with your Razorpay key
+                "amount": "47200", // 472.00 INR in paise
+                "currency": "INR",
+                "name": "BookMySport",
+                "description": "Snooker Booking Payment",
+                "image": "https://example.com/your_logo.jpg",
+                "order_id": "", // This will be generated by your server
+                "handler": function(response) {
+                    // On successful payment
+                    showPaymentStatus(true, "Payment Successful!", "Your booking has been confirmed. Thank you!");
+                    
+                    // In a real implementation, you would:
+                    // 1. Send the payment ID to your server
+                    // 2. Verify the payment signature
+                    // 3. Redirect to success page or show confirmation
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay-form').submit();
+                },
+                "prefill": {
+                    "name": "John Doe",
+                    "email": "john.doe@example.com",
+                    "contact": "9999999999"
+                },
+                "notes": {
+                    "address": "Sports Venue Booking",
+                    "booking_reference": "BMS123456"
+                },
+                "theme": {
+                    "color": "#4a6bff"
+                }
+            };
+
+            try {
+                const rzp = new Razorpay(options);
+                rzp.open();
+                
+                rzp.on('payment.failed', function(response) {
+                    // Show detailed error message to user
+                    const errorReason = response.error.description || 'Payment could not be processed';
+                    showPaymentError(errorReason);
+                    
+                    // Log detailed error for debugging
+                    console.error('Payment failed:', response.error);
+                });
+                
+            } catch (error) {
+                // Handle initialization errors
+                showPaymentError('Payment system is currently unavailable. Please try again later.');
+                console.error('Razorpay initialization failed:', error);
+            }
+        });
+
+        // Function to show payment error
+        function showPaymentError(message) {
+            errorMessage.textContent = message;
+            paymentError.style.display = 'block';
+            
+            // Scroll to error message
+            paymentError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Function to show payment status modal
+        function showPaymentStatus(success, title, message) {
+            const icon = paymentStatusModal.querySelector('#status-icon i');
+            
+            if (success) {
+                statusIcon.className = 'payment-status-icon success-icon';
+                icon.className = 'fas fa-check-circle';
+            } else {
+                statusIcon.className = 'payment-status-icon failure-icon';
+                icon.className = 'fas fa-times-circle';
+            }
+            
+            statusTitle.textContent = title;
+            statusMessage.textContent = message;
+            paymentStatusModal.style.display = 'flex';
+        }
+
+        // Retry button click handler
+        retryButton.addEventListener('click', function() {
+            paymentStatusModal.style.display = 'none';
+            document.getElementById('pay-button').click();
+        });
+
+        // Close button click handler
+        closeButton.addEventListener('click', function() {
+            paymentStatusModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        paymentStatusModal.addEventListener('click', function(e) {
+            if (e.target === paymentStatusModal) {
+                paymentStatusModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
