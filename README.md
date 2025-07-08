@@ -92,6 +92,7 @@ Edit
 Authorization: Bearer <token>
 The authmiddleware.js verifies the token and attaches the user ID to req.user.
 
+Screenshots of the website are uploaded in repository.
 
 
 🧠 What I Learned
