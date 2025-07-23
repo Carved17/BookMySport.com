@@ -108,4 +108,4 @@ Managing protected routes and middleware
 
 
 📬 Contact
-For queries or collaborations: keyurarora17@gmail.com
+For queries or collaborations: keyurarora17@gmail.com and rishabhpawar75@gmail.com
